@@ -1,6 +1,11 @@
-﻿namespace Dsw2026Ej15.Api.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+
+namespace Dsw2026Ej15.Api.Models
 {
-    public class DoctorModel
+    public record DoctorModel
     {
+
+        public record Request([Required] string Name, [Required] string LicenseNumber, Guid SpecialityId);
     }
 }
