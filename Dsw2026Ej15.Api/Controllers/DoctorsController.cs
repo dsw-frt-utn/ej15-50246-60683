@@ -87,6 +87,7 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    //esto lo tengo q cambiar para q sea una baja logica y no una baja fisica, tiene q setearlo como desactivado, tendria q agregar tmb un metodo de updateDoctor para poder setearlo como desactivado
     public async Task<ActionResult> DeleteDoctor(Guid Id)
     {
         var doctor = await _persistence.GetDoctorByIdAsync(Id);

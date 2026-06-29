@@ -1,4 +1,5 @@
 
+using Dsw2026Ej15.Api.Configurations;
 using Dsw2026Ej15.Api.Middlewares;
 using Dsw2026Ej15.Data.Implementations;
 using Dsw2026Ej15.Domain.Interfaces;
@@ -14,7 +15,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddSingleton<IPersistence, PersistenceInMemory>();
+        builder.Services.AddPersistenceEf(builder.Configuration);
+        builder.Services.AddScoped<IPersistence, PersistenceEF>();
 
         builder.Services.AddHealthChecks();
 
@@ -29,12 +31,9 @@ public class Program
         }
 
         app.UseAuthorization();
-
         app.MapControllers();
-
         app.MapHealthChecks("/health-check");
 
         app.Run();
-
     }
 }
