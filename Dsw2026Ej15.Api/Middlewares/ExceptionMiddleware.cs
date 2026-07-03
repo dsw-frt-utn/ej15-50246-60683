@@ -23,6 +23,10 @@ namespace Dsw2026Ej15.Api.Middlewares
             {
                 await HandleExceptionAsync(context, ex);
             }
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex);
+            }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)

@@ -94,7 +94,8 @@ public class DoctorsController : ControllerBase
         {
             return NotFound();
         }
-        await _persistence.DeleteDoctorAsync(Id);
+        doctor.Deactivate();
+        await _persistence.UpdateDoctorAsync(doctor);
         return NoContent();
     }
 }
