@@ -10,17 +10,12 @@ namespace Dsw2026Ej15.Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
 
+        private Speciality() { }
+
         public Speciality(string name, string description, Guid? id = null) : base(id)
         {
             Name = name;
             Description = description;
-        }
-
-        [JsonConstructor]
-        private Speciality() : base(null)
-        {
-            Name = string.Empty;
-            Description = string.Empty;
         }
     }
 }
