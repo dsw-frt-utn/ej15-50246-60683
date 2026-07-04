@@ -1,16 +1,13 @@
 ﻿using Dsw2026Ej15.Api.Models;
-using Dsw2026Ej15.Data.Dto;
-using Dsw2026Ej15.Data.Implementations;
 using Dsw2026Ej15.Domain.Entities;
 using Dsw2026Ej15.Domain.Exceptions;
 using Dsw2026Ej15.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 namespace Dsw2026Ej15.Api.Controllers;
 
 [ApiController]
-[Route("api/doctors")] //
+[Route("api/doctors")] 
 public class DoctorsController : ControllerBase
 {
     private readonly IPersistence _persistence;
@@ -57,15 +54,14 @@ public class DoctorsController : ControllerBase
     public async Task<ActionResult<List<Doctor>>> GetAll()
     {
         var doctors = await _persistence.GetDoctorsAsync();
-        var activeDoctors = doctors.Where(d => d.IsActive).Select(d => new
+
+        return Ok(doctors.Select(d => new
         {
             d.Id,
             d.Name,
             d.LicenseNumber,
-            SpecialityName = d.Speciality?.Name ?? string.Empty
-        }).ToList();
-
-        return Ok(activeDoctors);
+            SpecialityName = d.Speciality?.Name
+        }));
     }
 
     [HttpGet("{id}")]
@@ -73,8 +69,7 @@ public class DoctorsController : ControllerBase
     {
         var doctor = await _persistence.GetDoctorByIdAsync(Id);
 
-        if (doctor == null || !doctor.IsActive)
-
+        if (doctor == null)
         {
             return NotFound();
         }
@@ -90,12 +85,37 @@ public class DoctorsController : ControllerBase
     public async Task<ActionResult> DeleteDoctor(Guid Id)
     {
         var doctor = await _persistence.GetDoctorByIdAsync(Id);
-        if (doctor == null || !doctor.IsActive)
+        if (doctor == null)
         {
             return NotFound();
         }
         doctor.Deactivate();
         await _persistence.UpdateDoctorAsync(doctor);
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateDoctor(Guid id,
+    [FromBody] DoctorModel.Request request)
+    {
+        var doctor = await _persistence.GetDoctorByIdAsync(id);
+
+        if (doctor == null)
+            return NotFound();
+
+        var speciality =
+            await _persistence.GetSpecialityByIdAsync(request.SpecialityId);
+
+        if (speciality == null)
+            throw new ValidationException("La especialidad no existe");
+
+        doctor.Update(
+            request.Name,
+            request.LicenseNumber,
+            speciality);
+
+        await _persistence.UpdateDoctorAsync(doctor);
+
         return NoContent();
     }
 }

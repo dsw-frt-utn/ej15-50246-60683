@@ -9,7 +9,7 @@ namespace Dsw2026Ej15.Data
     public class Dsw2026Ej15DbContext : DbContext
     {
         public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Speciality> Specialites { get; set; }
+        public DbSet<Speciality> Specialities { get; set; }
 
         public Dsw2026Ej15DbContext(DbContextOptions<Dsw2026Ej15DbContext> options) : 
             base(options)
@@ -25,7 +25,11 @@ namespace Dsw2026Ej15.Data
                 e.ToTable("Doctors");
                 e.Property(p => p.Name).HasMaxLength(100).IsRequired();
                 e.Property(p => p.LicenseNumber).HasMaxLength(50).IsRequired();
-                e.HasIndex(p => p.LicenseNumber).IsUnique();
+                e.HasIndex(p => p.LicenseNumber)
+                .IsUnique();
+                e.HasOne(d => d.Speciality)
+                .WithMany()
+                .HasForeignKey(d => d.SpecialityId);
             });
 
             modelBuilder.Entity<Speciality>(e =>

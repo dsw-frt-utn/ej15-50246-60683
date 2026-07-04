@@ -1,28 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using Dsw2026Ej15.Domain.Interfaces;
+using Dsw2026Ej15.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Dsw2026Ej15.Domain.Entities
+namespace Dsw2026Ej15.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class SpecialitiesController : ControllerBase
 {
-    public class Speciality : BaseEntity
+    private readonly IPersistence _persistence;
+    public SpecialitiesController(IPersistence persistence)
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        _persistence = persistence;
+    }
 
-        // Constructor para uso normal en el código
-        public Speciality(string name, string description, Guid? id = null) : base(id)
-        {
-            Name = name;
-            Description = description;
-        }
+    [HttpGet]
+    public async Task<ActionResult<List<Speciality>>> GetAll()
+    {
+        var specialities = await _persistence.GetSpecialitiesAsync();
+        return Ok(specialities);
+    }
 
-        // Constructor privado para que JsonSerializer pueda deserializar
-        [JsonConstructor]
-        private Speciality() : base(null)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Speciality>> GetById(Guid Id)
+    {
+        var speciality = await _persistence.GetSpecialityByIdAsync(Id);
+        if (speciality == null)
         {
-            Name = string.Empty;
-            Description = string.Empty;
+            return NotFound();
         }
+        return Ok(speciality);
     }
 }
